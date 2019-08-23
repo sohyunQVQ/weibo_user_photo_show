@@ -11,6 +11,9 @@ from coser.models import Coser, Photo
 proxy = {'http': 'http://127.0.0.1:12639', 'https': 'http://127.0.0.1:12639'}
 #外网代理
 
+def printf(text):
+    print("[%s] %s" % (time.strftime('%Y-%m-%d %H:%M:%S'), text))
+
 def get_cookies():
     r = session.get("https://weibo.com/", allow_redirects=False, proxies=proxy)
     Ugrow_G0 = r.cookies['Ugrow-G0']
@@ -39,7 +42,7 @@ def download(imglist,uid, dirname=""):
         os.mkdir("coser/static/images/%s" % dirname)
     if not os.path.isdir("coser/static/img/%s" % uid):
         os.mkdir("coser/static/img/%s" % uid)
-    print("project:%s(%s)" % (dirname,len(imglist)))
+    printf("project:%s(%s)" % (dirname,len(imglist)))
     for filename in imglist:
         with open("coser/static/images/%s/%s.jpg" % (dirname, filename), mode='wb') as file:
             file.write(session.get("http://wx2.sinaimg.cn/large/%s.jpg" % filename, proxies=proxy).content)
@@ -69,14 +72,15 @@ def getImage(uid):
 if __name__ == "__main__":
     
     while True:
+        printf("开始执行任务")
         cookies = {}
         i=1
         while not cookies:
-            print("第%i次尝试获取访客状态" % i)
+            printf("第%i次尝试获取访客状态" % i)
             session = requests.session()
             cookies = get_cookies()
             if cookies:
-                print("获取成功将获取照片墙")
+                printf("获取成功将获取照片墙")
             else:
                 i=i+1
         coser = Coser.objects.filter()
@@ -94,5 +98,5 @@ if __name__ == "__main__":
                 Photo.objects.bulk_create(querysetlist)
             if len(downloadlist)>0:
                 download(downloadlist,c.uid,c.name)
-        print("本次任务结束")
+        printf("本次任务结束")
         time.sleep(60*60)
