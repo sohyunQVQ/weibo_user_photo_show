@@ -1,0 +1,109 @@
+{% load random %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Weibo Coser Show</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <style>
+    .header{
+        height: 10%;
+    }
+    .search{
+        margin-top: 10%;
+        margin-left:auto;
+        margin-right:auto;
+        margin-bottom: 10%;
+    }
+    .search-input{
+        height:50px;
+    }
+    .search-btn{
+        height:50px;
+    }
+    .bodycolor{
+        background-color: #fafbfc;
+    }
+    .img-show{
+        margin: 10px 15px;
+        padding: 5px;
+        width:250px;
+        height:380px;
+        float:left;
+        border: 1px solid #fafbfc;
+        background-color: white;
+        border-radius: 2%;
+    }
+    .img-t{
+        width: 240px;
+        height: 320px;
+        background-size: 240px auto;
+        background-position: center center;
+        background-repeat:no-repeat;
+    }
+    .img-b{
+        font-size: 15px;
+        color:black;
+    }
+    .img-c{
+        font-size: 14px;
+        color:grey;
+    }
+    </style>
+</head>
+<body style="background-color: #fafbfc">
+    <div class="container">
+        <div class="header">
+            <div class="search">
+                <h1 class="text-center">Coser Show</h1>
+                <div>You can search coser weibo name</div>
+                <form class="form-horizontal" action="/search" method="POST">
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            {% csrf_token %}
+                            <input type="text" name="search"" class="form-control search-input" placeholder="Search Weibo name" />
+                        </div>
+                        <button class="btn btn-default search-btn">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <hr style="margin:0"/>
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                {% for c in coser %}
+                {% if c.uid %}
+                <a href="coser/{{ c.uid }}">
+                {% endif %}
+                <div class="img-show">
+                    {% if c.uid %}
+                    <div class="img-t" style="background-image: url('/static/img/{{ c.uid }}/{{ c.imgid }}.jpg')"></div>                    
+                    {% else %}
+                    
+                    <div class="img-t" onclick="openWithoutReferrer('{{ c.imgid }}')" style="background-image: url('/static/img/{{ c.puid }}/{{ c.imgid }}.jpg')"></div>                    
+                    {% endif %}
+                    <label class="img-b">{{ c.coser }}</label>
+                    <br/>
+                    <label class="img-c">更新时间：{{ c.time }}</label>
+                </div>
+                {% if c.uid %}
+                </a>
+                {% endif %}
+                {% endfor %}  
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+function openWithoutReferrer(id){
+    var oDate = new Date();
+    window.open('javascript:window.name', '<script>location.replace("https://wx1.sinaimg.cn/large/'+id+'.jpg")<\/script>'+oDate.getTime());
+}
+</script>
+</html>
